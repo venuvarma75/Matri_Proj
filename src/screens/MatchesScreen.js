@@ -33,15 +33,121 @@ const NavItem = ({ icon, label, active, onPress }) => (
   </TouchableOpacity>
 );
 
+// Profile Card Component
+const ProfileCard = ({ profile, onInterested, onNotInterested, onViewProfile, onSendMessage }) => (
+  <View style={styles.profileCard}>
+    {/* Last Seen */}
+    <View style={styles.lastSeen}>
+      <Text style={styles.lastSeenText}>Last seen {profile.lastSeen}</Text>
+    </View>
+
+    {/* Profile Header */}
+    <View style={styles.profileHeader}>
+      <TouchableOpacity 
+        style={styles.imageContainer}
+        onPress={() => onViewProfile(profile)}
+      >
+        {profile.image ? (
+          <Image 
+            source={profile.image} 
+            style={styles.profileImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.defaultImage}>
+            <Icon name="user" size={30} color="#999" />
+          </View>
+        )}
+      </TouchableOpacity>
+      <View style={styles.profileBasicInfo}>
+        <Text style={styles.profileName}>{profile.name}</Text>
+        <Text style={styles.profileAgeHeight}>{profile.age} • {profile.height}</Text>
+        <Text style={styles.profileEducation}>{profile.education}</Text>
+      </View>
+    </View>
+
+    {/* Profile Details */}
+    <View style={styles.profileDetails}>
+      <View style={styles.detailItem}>
+        <Icon name="map-marker-alt" size={12} color="#666" />
+        <Text style={styles.detailText}>{profile.location}</Text>
+      </View>
+      <View style={styles.detailItem}>
+        <Icon name="briefcase" size={12} color="#666" />
+        <Text style={styles.detailText}>{profile.profession}</Text>
+      </View>
+    </View>
+
+    {/* Bio */}
+    <View style={styles.bioSection}>
+      <Text style={styles.bioText} numberOfLines={2}>
+        {profile.bio}
+      </Text>
+    </View>
+
+    {/* Interests */}
+    <View style={styles.interestsSection}>
+      <Text style={styles.interestsTitle}>Interests:</Text>
+      <View style={styles.interestsContainer}>
+        {profile.interests.slice(0, 3).map((interest, index) => (
+          <View key={index} style={styles.interestTag}>
+            <Text style={styles.interestText}>{interest}</Text>
+          </View>
+        ))}
+        {profile.interests.length > 3 && (
+          <View style={styles.interestTag}>
+            <Text style={styles.interestText}>+{profile.interests.length - 3}</Text>
+          </View>
+        )}
+      </View>
+    </View>
+
+    {/* Action Buttons */}
+    <View style={styles.actionButtons}>
+      <TouchableOpacity 
+        style={[styles.actionButton, styles.viewProfileButton]}
+        onPress={() => onViewProfile(profile)}
+      >
+        <Icon name="eye" size={12} color="#666" />
+        <Text style={styles.viewProfileText}> View Profile</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity 
+        style={[styles.actionButton, styles.messageButton]}
+        onPress={() => onSendMessage(profile)}
+      >
+        <Icon name="comment" size={12} color="#666" />
+        <Text style={styles.messageText}> Message</Text>
+      </TouchableOpacity>
+    </View>
+
+    {/* Interest Question */}
+    <View style={styles.interestQuestionSection}>
+      <Text style={styles.interestQuestion}>Interested with this profile?</Text>
+      <View style={styles.interestActions}>
+        <TouchableOpacity 
+          style={[styles.interestButton, styles.interestedButton]} 
+          onPress={() => onInterested(profile)}
+        >
+          <Text style={styles.interestedButtonText}>Yes, Interested</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.interestButton, styles.notInterestedButton]} 
+          onPress={() => onNotInterested(profile)}
+        >
+          <Text style={styles.notInterestedButtonText}>No</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+);
+
 const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
-  const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProfiles, setFilteredProfiles] = useState([]);
   const [interestedProfiles, setInterestedProfiles] = useState([]);
   const [showInterestModal, setShowInterestModal] = useState(false);
   const [currentInterestedProfile, setCurrentInterestedProfile] = useState(null);
-  const [showMatchPreferences, setShowMatchPreferences] = useState(false);
-  const [activeFilterTab, setActiveFilterTab] = useState('Match Preference');
 
   const profiles = [
     {
@@ -49,9 +155,9 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
       name: 'Srivalli',
       age: '22 yrs',
       height: '5\'0"',
-      education: 'B-tech',
+      education: 'B.Tech',
       location: 'Hyderabad',
-      profession: 'Software Engg.',
+      profession: 'Software Engineer',
       lastSeen: '2m ago',
       image: profileImages?.srivalli,
       bio: 'Software engineer passionate about technology and innovation. Love traveling and exploring new cultures.',
@@ -75,7 +181,7 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
       name: 'Anitha',
       age: '23 yrs',
       height: '5\'1"',
-      education: 'B-tech',
+      education: 'B.Tech',
       location: 'Chennai',
       profession: 'Data Scientist',
       lastSeen: '10m ago',
@@ -88,7 +194,7 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
       name: 'Rahul Kumar',
       age: '25 yrs',
       height: '5\'8"',
-      education: 'M-tech',
+      education: 'M.Tech',
       location: 'Delhi',
       profession: 'Product Manager',
       lastSeen: '15m ago',
@@ -103,8 +209,6 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
     setFilteredProfiles(profiles);
   }, []);
 
-  const currentProfile = filteredProfiles[currentProfileIndex] || profiles[0];
-
   // Navigation handlers
   const navigateToHome = () => {
     if (navigation && navigation.navigate) {
@@ -116,20 +220,11 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
     // Already on matches screen
   };
 
-  // const navigateToChat = () => {
-  //   Alert.alert('Coming Soon', 'Chat feature will be available soon!');
-  // };
-
-  const navigateToChat = () => {
-  // Navigate to a default chat or show message
-  if (interestedProfiles.length > 0) {
-    // Navigate to chat with the first interested profile, or you can create a chat list screen
-    navigation.navigate('chat', { profile: interestedProfiles[0] });
-  } else {
-    Alert.alert('No Chats', 'You need to show interest in profiles first to start chatting.');
-  }
-};
-
+  const navigateToChat = (profile) => {
+    if (navigation && navigation.navigate) {
+      navigation.navigate('chat', { profile });
+    }
+  };
 
   const navigateToProfile = () => {
     Alert.alert('Coming Soon', 'Profile feature will be available soon!');
@@ -147,25 +242,8 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
         profile.education.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredProfiles(filtered);
-      setCurrentProfileIndex(0);
     }
   }, [searchQuery]);
-
-  const handleNext = () => {
-    if (currentProfileIndex < filteredProfiles.length - 1) {
-      setCurrentProfileIndex(currentProfileIndex + 1);
-    } else {
-      setCurrentProfileIndex(0);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentProfileIndex > 0) {
-      setCurrentProfileIndex(currentProfileIndex - 1);
-    } else {
-      setCurrentProfileIndex(filteredProfiles.length - 1);
-    }
-  };
 
   const handleInterested = (profile) => {
     console.log('Interested in:', profile.name);
@@ -179,44 +257,27 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
     setCurrentInterestedProfile(profile);
     setShowInterestModal(true);
     
-    // Move to next profile after a delay
+    // Navigate to chat after a delay
     setTimeout(() => {
-      handleNext();
       setShowInterestModal(false);
+      navigateToChat(profile);
     }, 2000);
   };
 
-  const handleNotInterested = () => {
-    console.log('Not interested in:', currentProfile.name);
-    handleNext();
+  const handleNotInterested = (profile) => {
+    console.log('Not interested in:', profile.name);
+    Alert.alert(
+      'Profile Passed',
+      `You passed on ${profile.name}. We'll show you more matches.`,
+      [{ text: 'OK', style: 'default' }]
+    );
   };
 
-  // const handleSendMessage = (profile) => {
-  //   Alert.alert(
-  //     'Send Message',
-  //     `Start a conversation with ${profile.name}`,
-  //     [
-  //       {
-  //         text: 'Cancel',
-  //         style: 'cancel'
-  //       },
-  //       {
-  //         text: 'Send',
-  //         onPress: () => {
-  //           Alert.alert('Success', `Message sent to ${profile.name}!`);
-  //         }
-  //       }
-  //     ]
-  //   );
-  // };
-
   const handleSendMessage = (profile) => {
-  // Navigate to ChatScreen with profile data
-  if (navigation && navigation.navigate) {
-    navigation.navigate('chat', { profile });
-  }
-};
-
+    if (navigation && navigation.navigate) {
+      navigation.navigate('chat', { profile });
+    }
+  };
 
   const handleViewProfile = (profile) => {
     Alert.alert(
@@ -238,7 +299,18 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
       'Your Interested Profiles',
       `You have shown interest in ${interestedProfiles.length} profile(s):\n\n${interestedProfiles.map(p => `• ${p.name}`).join('\n')}`,
       [
-        { text: 'OK', style: 'default' }
+        { 
+          text: 'OK', 
+          style: 'default' 
+        },
+        {
+          text: 'Chat with Latest',
+          onPress: () => {
+            if (interestedProfiles.length > 0) {
+              navigateToChat(interestedProfiles[interestedProfiles.length - 1]);
+            }
+          }
+        }
       ]
     );
   };
@@ -318,124 +390,20 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
         </View>
       </View>
 
-      {/* Profile Card */}
+      {/* Profiles List */}
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {filteredProfiles.length > 0 ? (
-          <View style={styles.profileCard}>
-            {/* Last Seen */}
-            <View style={styles.lastSeen}>
-              <Text style={styles.lastSeenText}>Last seen {currentProfile.lastSeen}</Text>
-            </View>
-
-            {/* Profile Image */}
-            <View style={styles.profileImageContainer}>
-              <TouchableOpacity 
-                style={styles.imageContainer}
-                onPress={() => handleViewProfile(currentProfile)}
-              >
-                {currentProfile.image ? (
-                  <Image 
-                    source={currentProfile.image} 
-                    style={styles.profileImage}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View style={styles.defaultImage}>
-                    <Icon name="user" size={40} color="#999" />
-                  </View>
-                )}
-              </TouchableOpacity>
-              <Text style={styles.profileName}>{currentProfile.name}</Text>
-            </View>
-
-            {/* Profile Details */}
-            <View style={styles.profileDetails}>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailText}>{currentProfile.age}</Text>
-                <Text style={styles.detailSeparator}>•</Text>
-                <Text style={styles.detailText}>{currentProfile.height}</Text>
-                <Text style={styles.detailSeparator}>•</Text>
-                <Text style={styles.detailText}>{currentProfile.education}</Text>
-              </View>
-              
-              <View style={styles.infoRow}>
-                <Icon name="map-marker-alt" size={14} color="#666" />
-                <Text style={styles.infoText}>{currentProfile.location}</Text>
-              </View>
-              
-              <View style={styles.infoRow}>
-                <Icon name="briefcase" size={14} color="#666" />
-                <Text style={styles.infoText}>{currentProfile.profession}</Text>
-              </View>
-
-              {/* Quick Actions */}
-              <View style={styles.quickActions}>
-                <TouchableOpacity 
-                  style={styles.quickActionButton}
-                  onPress={() => handleViewProfile(currentProfile)}
-                >
-                  <Icon name="eye" size={14} color="#666" />
-                  <Text style={styles.quickActionText}>View Profile</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={styles.quickActionButton}
-                  onPress={() => handleSendMessage(currentProfile)}
-                >
-                  <Icon name="comment" size={14} color="#666" />
-                  <Text style={styles.quickActionText}>Message</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Interest Question */}
-            <View style={styles.interestSection}>
-              <Text style={styles.interestQuestion}>Interested with this profile?</Text>
-              
-              <View style={styles.actionButtons}>
-                <TouchableOpacity 
-                  style={[styles.actionButton, styles.interestedButton]} 
-                  onPress={() => handleInterested(currentProfile)}
-                >
-                  <Text style={styles.interestedButtonText}>Yes, Interested</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={[styles.actionButton, styles.notInterestedButton]} 
-                  onPress={handleNotInterested}
-                >
-                  <Text style={styles.notInterestedButtonText}>No</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Navigation Dots */}
-            <View style={styles.navigationDots}>
-              {filteredProfiles.map((_, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => setCurrentProfileIndex(index)}
-                >
-                  <View
-                    style={[
-                      styles.dot,
-                      index === currentProfileIndex && styles.activeDot
-                    ]}
-                  />
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {/* Navigation Arrows */}
-            <View style={styles.navigationArrows}>
-              <TouchableOpacity style={styles.arrowButton} onPress={handlePrevious}>
-                <Icon name="chevron-left" size={24} color="#ff6b6b" />
-              </TouchableOpacity>
-              <Text style={styles.profileCounter}>
-                {currentProfileIndex + 1} / {filteredProfiles.length}
-              </Text>
-              <TouchableOpacity style={styles.arrowButton} onPress={handleNext}>
-                <Icon name="chevron-right" size={24} color="#ff6b6b" />
-              </TouchableOpacity>
-            </View>
+          <View style={styles.profilesList}>
+            {filteredProfiles.map(profile => (
+              <ProfileCard
+                key={profile.id}
+                profile={profile}
+                onInterested={handleInterested}
+                onNotInterested={handleNotInterested}
+                onViewProfile={handleViewProfile}
+                onSendMessage={handleSendMessage}
+              />
+            ))}
           </View>
         ) : (
           <View style={styles.noResults}>
@@ -469,7 +437,7 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
               You've shown interest in {currentInterestedProfile?.name}
             </Text>
             <Text style={styles.modalSubText}>
-              You'll be notified if they're interested too
+              Taking you to chat...
             </Text>
           </View>
         </View>
@@ -493,7 +461,13 @@ const MatchesScreen = ({ user, onLogout, profileImages, navigation }) => {
           icon="comment" 
           label="Chat" 
           active={false} 
-          onPress={navigateToChat}
+          onPress={() => {
+            if (interestedProfiles.length > 0) {
+              navigateToChat(interestedProfiles[0]);
+            } else {
+              Alert.alert('No Chats', 'You need to show interest in profiles first to start chatting.');
+            }
+          }}
         />
         <NavItem 
           icon="user" 
@@ -607,11 +581,14 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  profilesList: {
+    padding: 16,
+  },
   profileCard: {
     backgroundColor: 'white',
-    margin: 20,
     borderRadius: 12,
-    padding: 20,
+    padding: 16,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -620,24 +597,24 @@ const styles = StyleSheet.create({
   },
   lastSeen: {
     alignItems: 'flex-end',
-    marginBottom: 15,
+    marginBottom: 12,
   },
   lastSeenText: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666',
     fontWeight: '300',
-    letterSpacing: 0.3,
   },
-  profileImageContainer: {
+  profileHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 12,
   },
   imageContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     overflow: 'hidden',
-    marginBottom: 15,
+    marginRight: 12,
     backgroundColor: '#f0f0f0',
   },
   profileImage: {
@@ -651,86 +628,122 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#e9ecef',
   },
+  profileBasicInfo: {
+    flex: 1,
+  },
   profileName: {
-    fontSize: 20,
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: '600',
     color: '#333',
-    letterSpacing: 0.3,
-    marginBottom: 5,
+    marginBottom: 2,
   },
-  profileDetails: {
-    alignItems: 'center',
-    marginBottom: 25,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  detailText: {
-    fontSize: 15,
-    fontWeight: '400',
-    color: '#333',
-    letterSpacing: 0.3,
-  },
-  detailSeparator: {
-    marginHorizontal: 8,
-    color: '#666',
-    fontSize: 16,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  infoText: {
+  profileAgeHeight: {
     fontSize: 14,
     color: '#666',
-    fontWeight: '400',
-    marginLeft: 8,
-    letterSpacing: 0.3,
+    marginBottom: 2,
   },
-  quickActions: {
+  profileEducation: {
+    fontSize: 13,
+    color: '#888',
+    fontWeight: '500',
+  },
+  profileDetails: {
     flexDirection: 'row',
-    marginTop: 15,
-    gap: 15,
+    marginBottom: 12,
+    gap: 16,
   },
-  quickActionButton: {
+  detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f8f8',
+  },
+  detailText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 4,
+  },
+  bioSection: {
+    marginBottom: 12,
+  },
+  bioText: {
+    fontSize: 13,
+    color: '#555',
+    lineHeight: 18,
+  },
+  interestsSection: {
+    marginBottom: 12,
+  },
+  interestsTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 6,
+  },
+  interestsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  interestTag: {
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  interestText: {
+    fontSize: 10,
+    color: '#666',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
-    gap: 4,
+    flex: 1,
+    marginHorizontal: 4,
+    justifyContent: 'center',
   },
-  quickActionText: {
+  viewProfileButton: {
+    backgroundColor: '#f8f8f8',
+  },
+  messageButton: {
+    backgroundColor: '#f0f8ff',
+  },
+  viewProfileText: {
     fontSize: 12,
     color: '#666',
-    fontWeight: '400',
+    marginLeft: 4,
   },
-  interestSection: {
+  messageText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 4,
+  },
+  interestQuestionSection: {
     alignItems: 'center',
-    marginBottom: 20,
   },
   interestQuestion: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
     color: '#333',
-    marginBottom: 15,
-    letterSpacing: 0.3,
+    marginBottom: 12,
   },
-  actionButtons: {
+  interestActions: {
     flexDirection: 'row',
     justifyContent: 'center',
     width: '100%',
   },
-  actionButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    marginHorizontal: 10,
-    minWidth: 140,
+  interestButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginHorizontal: 8,
+    minWidth: 120,
     alignItems: 'center',
   },
   interestedButton: {
@@ -743,43 +756,13 @@ const styles = StyleSheet.create({
   },
   interestedButtonText: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 0.3,
   },
   notInterestedButtonText: {
     color: '#666',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 0.3,
-  },
-  navigationDots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 15,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#ddd',
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: '#ff6b6b',
-  },
-  navigationArrows: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  arrowButton: {
-    padding: 10,
-  },
-  profileCounter: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '400',
   },
   noResults: {
     alignItems: 'center',
@@ -880,9 +863,8 @@ const styles = StyleSheet.create({
     color: '#ff6b6b',
   },
   bottomSpacer: {
-    height: 80,
+    height: 20,
   },
 });
 
 export default MatchesScreen;
-

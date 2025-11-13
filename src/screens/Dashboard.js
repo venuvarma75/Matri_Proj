@@ -1,550 +1,3 @@
-// import React from 'react';
-// import {
-//   View,
-//   Text,
-//   StyleSheet,
-//   ScrollView,
-//   TouchableOpacity,
-//   TextInput,
-//   Dimensions,
-//   Alert,
-//   Image
-// } from 'react-native';
-// import Icon from 'react-native-vector-icons/FontAwesome5';
-
-// const { width } = Dimensions.get('window');
-
-// // Import images (make sure these paths are correct)
-// const images = {
-//   priya: require('../assets/priya.jpg'),
-//   anjali: require('../assets/anjali.jpg'),
-//   sneha: require('../assets/sneha.jpg'),
-//   divya: require('../assets/divya.jpg'),
-// };
-
-// // Stat Card Component
-// const StatCard = ({ icon, title, value }) => (
-//   <View style={styles.statCard}>
-//     <Icon name={icon} size={20} color="#ff6b6b" style={styles.statIcon} />
-//     <Text style={styles.statTitle}>{title}</Text>
-//     <Text style={styles.statValue}>{value}</Text>
-//   </View>
-// );
-
-// // Match Card Component
-// const MatchCard = ({ name, age, profession, imageKey, onLike, onPass }) => (
-//   <View style={styles.matchCard}>
-//     <View style={styles.matchImg}>
-//       <Image 
-//         source={images[imageKey]} 
-//         style={styles.matchImage}
-//         resizeMode="cover"
-//       />
-//     </View>
-//     <View style={styles.matchInfo}>
-//       <Text style={styles.matchName}>{name}</Text>
-//       <Text style={styles.matchDetails}>{age}, {profession}</Text>
-//       <View style={styles.matchActions}>
-//         <TouchableOpacity 
-//           style={[styles.actionButton, styles.likeButton]} 
-//           onPress={onLike}
-//         >
-//           <Icon name="heart" size={12} color="white" />
-//           <Text style={styles.likeButtonText}> Like</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity 
-//           style={[styles.actionButton, styles.passButton]} 
-//           onPress={onPass}
-//         >
-//           <Icon name="times" size={12} color="#666" />
-//           <Text style={styles.passButtonText}> Pass</Text>
-//         </TouchableOpacity>
-//       </View>
-//     </View>
-//   </View>
-// );
-
-// // Bottom Navigation Item Component
-// const NavItem = ({ icon, label, active, onPress }) => (
-//   <TouchableOpacity style={styles.navItem} onPress={onPress}>
-//     <Icon 
-//       name={icon} 
-//       size={20} 
-//       color={active ? '#ff6b6b' : '#999'} 
-//     />
-//     <Text style={[
-//       styles.navLabel,
-//       { color: active ? '#ff6b6b' : '#999' }
-//     ]}>
-//       {label}
-//     </Text>
-//   </TouchableOpacity>
-// );
-
-// const Dashboard = ({ user, onLogout, navigation }) => {
-  
-//   const handleLogout = () => {
-//     Alert.alert(
-//       "Logout",
-//       "Are you sure you want to logout?",
-//       [
-//         {
-//           text: "Cancel",
-//           style: "cancel"
-//         },
-//         {
-//           text: "Logout",
-//           onPress: () => {
-//             if (onLogout) {
-//               onLogout();
-//             }
-//           }
-//         }
-//       ]
-//     );
-//   };
-
-//   const handleLike = (name) => {
-//     Alert.alert('Interest Sent', `You liked ${name}!`);
-//   };
-
-//   const handlePass = (name) => {
-//     Alert.alert('Profile Passed', `You passed on ${name}`);
-//   };
-
-//   // Navigation handlers
-//   const navigateToHome = () => {
-//     // Already on home screen
-//   };
-
-//   const navigateToMatches = () => {
-//     navigation.navigate('Matches');
-//   };
-
-//   const navigateToChat = () => {
-//     navigation.navigate('Chat');
-//   };
-
-//   const navigateToProfile = () => {
-//     navigation.navigate('Profile');
-//   };
-
-//   const navigateToBasicDetails = () => {
-//     navigation.navigate('BasicDetails');
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       {/* Header with User Info and Logout */}
-//       <View style={styles.header}>
-//         <View style={styles.userInfo}>
-//           <Text style={styles.welcomeText}>
-//             Welcome, <Text style={styles.userName}>{user?.fullName || user?.username || 'User'}</Text>
-//           </Text>
-//           <Text style={styles.userEmail}>{user?.email || ''}</Text>
-//         </View>
-//         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-//           <Icon name="sign-out-alt" size={18} color="#ff6b6b" />
-//           <Text style={styles.logoutText}>Logout</Text>
-//         </TouchableOpacity>
-//       </View>
-      
-//       {/* Main Content */}
-//       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        
-//         {/* Search Section */}
-//         <View style={styles.searchSection}>
-//           <View style={styles.searchBox}>
-//             <Text style={styles.searchTitle}>
-//               <Icon name="search" size={14} color="#666" /> Quick search by criteria
-//             </Text>
-//             <View style={styles.searchInputContainer}>
-//               <TextInput
-//                 style={styles.searchInput}
-//                 placeholder="Search by name, location, etc."
-//                 placeholderTextColor="#999"
-//               />
-//               <TouchableOpacity style={styles.searchButton}>
-//                 <Icon name="filter" size={16} color="#666" />
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-//         </View>
-
-//         {/* Profile Alert Section */}
-//         <View style={styles.profileAlert}>
-//           <View style={styles.alertHeader}>
-//             <Icon name="exclamation-circle" size={20} color="#ff6b6b" />
-//             <Text style={styles.alertTitle}>Oops! Your profile is in progress.</Text>
-//           </View>
-//           <Text style={styles.alertText}>Complete now to get more matches.</Text>
-//           <TouchableOpacity style={styles.completeButton} onPress={navigateToBasicDetails}>
-//             <Icon name="edit" size={14} color="white" />
-//             <Text style={styles.completeButtonText}> Complete Now</Text>
-//           </TouchableOpacity>
-//         </View>
-
-//         {/* Stats Section */}
-//         <View style={styles.statsSection}>
-//           <View style={styles.statsRow}>
-//             <StatCard icon="eye" title="Viewed You" value="24" />
-//             <StatCard icon="paper-plane" title="Sent Request" value="12" />
-//           </View>
-//           <View style={styles.statsRow}>
-//             <StatCard icon="envelope" title="Received Request" value="8" />
-//             <StatCard icon="handshake" title="Request Accepted" value="5" />
-//           </View>
-//         </View>
-
-//         {/* Recommended Matches Section with Images */}
-//         <View style={styles.matchesSection}>
-//           <Text style={styles.sectionTitle}>
-//             <Icon name="users" size={16} color="#333" /> Recommended Matches
-//           </Text>
-//           <View style={styles.matchesGrid}>
-//             <MatchCard 
-//               name="Priya" 
-//               age="25" 
-//               profession="Software Engineer" 
-//               imageKey="priya" 
-//               onLike={() => handleLike('Priya')}
-//               onPass={() => handlePass('Priya')}
-//             />
-//             <MatchCard 
-//               name="Anjali" 
-//               age="27" 
-//               profession="Doctor" 
-//               imageKey="anjali"
-//               onLike={() => handleLike('Anjali')}
-//               onPass={() => handlePass('Anjali')}
-//             />
-//             <MatchCard 
-//               name="Sneha" 
-//               age="24" 
-//               profession="Teacher" 
-//               imageKey="sneha"
-//               onLike={() => handleLike('Sneha')}
-//               onPass={() => handlePass('Sneha')}
-//             />
-//             <MatchCard 
-//               name="Divya" 
-//               age="26" 
-//               profession="Architect" 
-//               imageKey="divya"
-//               onLike={() => handleLike('Divya')}
-//               onPass={() => handlePass('Divya')}
-//             />
-//           </View>
-//         </View>
-
-//         {/* Additional Space for Bottom Navigation */}
-//         <View style={styles.bottomSpacer} />
-//       </ScrollView>
-
-//       {/* Bottom Navigation */}
-//       <View style={styles.bottomNav}>
-//         <NavItem 
-//           icon="home" 
-//           label="Home" 
-//           active={true} 
-//           onPress={navigateToHome}
-//         />
-//         <NavItem 
-//           icon="heart" 
-//           label="Matches" 
-//           active={false} 
-//           onPress={navigateToMatches}
-//         />
-//         <NavItem 
-//           icon="comment" 
-//           label="Chat" 
-//           active={false} 
-//           onPress={navigateToChat}
-//         />
-//         <NavItem 
-//           icon="user" 
-//           label="Profile" 
-//           active={false} 
-//           onPress={navigateToProfile}
-//         />
-//       </View>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#f5f5f5',
-//   },
-//   header: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     alignItems: 'center',
-//     paddingHorizontal: 20,
-//     paddingVertical: 15,
-//     backgroundColor: 'white',
-//     borderBottomWidth: 1,
-//     borderBottomColor: '#e0e0e0',
-//   },
-//   userInfo: {
-//     flex: 1,
-//   },
-//   welcomeText: {
-//     fontSize: 18,
-//     fontWeight: '600',
-//     color: '#333',
-//   },
-//   userName: {
-//     color: '#ff6b6b',
-//   },
-//   userEmail: {
-//     fontSize: 14,
-//     color: '#666',
-//     marginTop: 2,
-//   },
-//   logoutButton: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     backgroundColor: '#f8f9fa',
-//     paddingHorizontal: 12,
-//     paddingVertical: 8,
-//     borderRadius: 20,
-//     borderWidth: 1,
-//     borderColor: '#ff6b6b',
-//   },
-//   logoutText: {
-//     color: '#ff6b6b',
-//     fontWeight: '500',
-//     marginLeft: 5,
-//     fontSize: 14,
-//   },
-//   scrollView: {
-//     flex: 1,
-//     padding: 20,
-//   },
-//   searchSection: {
-//     marginBottom: 20,
-//   },
-//   searchBox: {
-//     backgroundColor: 'white',
-//     borderRadius: 10,
-//     padding: 15,
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 4,
-//     elevation: 3,
-//   },
-//   searchTitle: {
-//     fontSize: 16,
-//     fontWeight: '600',
-//     marginBottom: 10,
-//     color: '#333',
-//   },
-//   searchInputContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     borderWidth: 1,
-//     borderColor: '#ddd',
-//     borderRadius: 8,
-//     overflow: 'hidden',
-//   },
-//   searchInput: {
-//     flex: 1,
-//     padding: 10,
-//     fontSize: 14,
-//     color: '#333',
-//   },
-//   searchButton: {
-//     padding: 10,
-//     backgroundColor: '#f8f9fa',
-//     borderLeftWidth: 1,
-//     borderLeftColor: '#ddd',
-//   },
-//   profileAlert: {
-//     backgroundColor: 'white',
-//     borderRadius: 10,
-//     padding: 20,
-//     marginBottom: 20,
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 4,
-//     elevation: 3,
-//     borderLeftWidth: 5,
-//     borderLeftColor: '#ff6b6b',
-//   },
-//   alertHeader: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginBottom: 5,
-//   },
-//   alertTitle: {
-//     fontSize: 16,
-//     fontWeight: '600',
-//     color: '#333',
-//     marginLeft: 8,
-//   },
-//   alertText: {
-//     color: '#666',
-//     marginBottom: 15,
-//     marginLeft: 28,
-//   },
-//   completeButton: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     backgroundColor: '#ff6b6b',
-//     borderRadius: 20,
-//     paddingVertical: 8,
-//     paddingHorizontal: 20,
-//     alignSelf: 'flex-start',
-//     marginLeft: 28,
-//   },
-//   completeButtonText: {
-//     color: 'white',
-//     fontWeight: '600',
-//     fontSize: 14,
-//   },
-//   statsSection: {
-//     marginBottom: 20,
-//   },
-//   statsRow: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     marginBottom: 15,
-//   },
-//   statCard: {
-//     backgroundColor: 'white',
-//     borderRadius: 10,
-//     padding: 20,
-//     alignItems: 'center',
-//     width: (width - 60) / 2,
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 4,
-//     elevation: 3,
-//   },
-//   statIcon: {
-//     marginBottom: 10,
-//   },
-//   statTitle: {
-//     fontSize: 12,
-//     color: '#666',
-//     marginBottom: 5,
-//     textAlign: 'center',
-//   },
-//   statValue: {
-//     fontSize: 18,
-//     fontWeight: '600',
-//     color: '#333',
-//   },
-//   matchesSection: {
-//     marginBottom: 20,
-//   },
-//   sectionTitle: {
-//     fontSize: 18,
-//     fontWeight: '600',
-//     color: '#333',
-//     marginBottom: 15,
-//   },
-//   matchesGrid: {
-//     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//     justifyContent: 'space-between',
-//   },
-//   matchCard: {
-//     backgroundColor: 'white',
-//     borderRadius: 10,
-//     width: (width - 60) / 2,
-//     marginBottom: 15,
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.1,
-//     shadowRadius: 4,
-//     elevation: 3,
-//     overflow: 'hidden',
-//   },
-//   matchImg: {
-//     height: 120,
-//     backgroundColor: '#e9ecef',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   matchImage: {
-//     width: '100%',
-//     height: '100%',
-//   },
-//   matchInfo: {
-//     padding: 15,
-//   },
-//   matchName: {
-//     fontWeight: '600',
-//     fontSize: 14,
-//     marginBottom: 5,
-//     color: '#333',
-//   },
-//   matchDetails: {
-//     color: '#666',
-//     fontSize: 12,
-//     marginBottom: 10,
-//   },
-//   matchActions: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//   },
-//   actionButton: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     borderRadius: 15,
-//     paddingVertical: 5,
-//     paddingHorizontal: 12,
-//     minWidth: 50,
-//   },
-//   likeButton: {
-//     backgroundColor: '#ff6b6b',
-//   },
-//   passButton: {
-//     backgroundColor: '#e9ecef',
-//   },
-//   likeButtonText: {
-//     color: 'white',
-//     fontSize: 12,
-//     fontWeight: '600',
-//   },
-//   passButtonText: {
-//     color: '#666',
-//     fontSize: 12,
-//     fontWeight: '600',
-//   },
-//   bottomNav: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-around',
-//     alignItems: 'center',
-//     backgroundColor: 'white',
-//     paddingVertical: 10,
-//     borderTopWidth: 1,
-//     borderTopColor: '#e0e0e0',
-//     paddingBottom: 5,
-//   },
-//   navItem: {
-//     alignItems: 'center',
-//     paddingHorizontal: 10,
-//   },
-//   navLabel: {
-//     fontSize: 12,
-//     marginTop: 4,
-//     fontWeight: '500',
-//   },
-//   bottomSpacer: {
-//     height: 20,
-//   },
-// });
-
-// export default Dashboard;
-
-
 // Dashboard.js
 import React from 'react';
 import {
@@ -564,12 +17,12 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const { width } = Dimensions.get('window');
 
-// Stat Card Component
+// Compact Stat Card Component
 const StatCard = ({ icon, title, value }) => (
   <View style={styles.statCard}>
-    <Icon name={icon} size={20} color="#ff6b6b" style={styles.statIcon} />
-    <Text style={styles.statTitle}>{title}</Text>
+    <Icon name={icon} size={16} color="#ff6b6b" style={styles.statIcon} />
     <Text style={styles.statValue}>{value}</Text>
+    <Text style={styles.statTitle}>{title}</Text>
   </View>
 );
 
@@ -585,7 +38,7 @@ const MatchCard = ({ name, age, profession, image, onLike, onPass }) => (
         />
       ) : (
         <View style={styles.defaultImage}>
-          <Icon name="user" size={30} color="#999" />
+          <Icon name="user" size={24} color="#999" />
         </View>
       )}
     </View>
@@ -597,15 +50,13 @@ const MatchCard = ({ name, age, profession, image, onLike, onPass }) => (
           style={[styles.actionButton, styles.likeButton]} 
           onPress={onLike}
         >
-          <Icon name="heart" size={12} color="white" />
-          <Text style={styles.likeButtonText}> Like</Text>
+          <Icon name="heart" size={10} color="white" />
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.actionButton, styles.passButton]} 
           onPress={onPass}
         >
-          <Icon name="times" size={12} color="#666" />
-          <Text style={styles.passButtonText}> Pass</Text>
+          <Icon name="times" size={10} color="#666" />
         </TouchableOpacity>
       </View>
     </View>
@@ -617,7 +68,7 @@ const NavItem = ({ icon, label, active, onPress }) => (
   <TouchableOpacity style={styles.navItem} onPress={onPress}>
     <Icon 
       name={icon} 
-      size={20} 
+      size={18} 
       color={active ? '#ff6b6b' : '#999'} 
     />
     <Text style={[
@@ -630,10 +81,8 @@ const NavItem = ({ icon, label, active, onPress }) => (
 );
 
 const Dashboard = ({ user, onLogout, profileImages, navigation }) => {
-  // Use actual user data if available, otherwise show default
   const userName = user?.fullName || user?.username || 'Teja';
   
-  // Sample matches data with images
   const recommendedMatches = [
     { 
       id: 1, 
@@ -694,7 +143,6 @@ const Dashboard = ({ user, onLogout, profileImages, navigation }) => {
     Alert.alert('Profile Passed', `You passed on ${name}`);
   };
 
-  // Navigation handlers
   const navigateToHome = () => {
     // Already on home screen
   };
@@ -705,14 +153,9 @@ const Dashboard = ({ user, onLogout, profileImages, navigation }) => {
     }
   };
 
-  // const navigateToChat = () => {
-  //   Alert.alert('Coming Soon', 'Chat feature will be available soon!');
-  // };
-
   const navigateToChat = () => {
-  // You can pass a default profile or navigate to matches first
-  Alert.alert('Chat', 'Please go to Matches screen to start chatting with your connections.');
-};
+    Alert.alert('Chat', 'Please go to Matches screen to start chatting with your connections.');
+  };
 
   const navigateToProfile = () => {
     Alert.alert('Coming Soon', 'Profile feature will be available soon!');
@@ -731,7 +174,7 @@ const Dashboard = ({ user, onLogout, profileImages, navigation }) => {
           <Text style={styles.userEmail}>{user?.email || ''}</Text>
         </View>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Icon name="sign-out-alt" size={18} color="#ff6b6b" />
+          <Icon name="sign-out-alt" size={16} color="#ff6b6b" />
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -752,32 +195,30 @@ const Dashboard = ({ user, onLogout, profileImages, navigation }) => {
                 placeholderTextColor="#999"
               />
               <TouchableOpacity style={styles.searchButton}>
-                <Icon name="filter" size={16} color="#666" />
+                <Icon name="filter" size={14} color="#666" />
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
-        {/* Profile Alert Section */}
+        {/* Profile Completion Section */}
         <View style={styles.profileAlert}>
           <View style={styles.alertHeader}>
-            <Icon name="exclamation-circle" size={20} color="#ff6b6b" />
-            <Text style={styles.alertTitle}>Oops! Your profile is in progress.</Text>
+            <Icon name="user-edit" size={18} color="#ff6b6b" />
+            <Text style={styles.alertTitle}>Your profile is in progress</Text>
           </View>
-          <Text style={styles.alertText}>Complete now to get more matches.</Text>
+          <Text style={styles.alertText}>Complete now to get more matches</Text>
           <TouchableOpacity style={styles.completeButton}>
-            <Icon name="edit" size={14} color="white" />
+            <Icon name="edit" size={12} color="white" />
             <Text style={styles.completeButtonText}> Complete Now</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Stats Section */}
+        {/* Compact Stats Section */}
         <View style={styles.statsSection}>
-          <View style={styles.statsRow}>
+          <View style={styles.statsGrid}>
             <StatCard icon="eye" title="Viewed You" value="24" />
             <StatCard icon="paper-plane" title="Sent Request" value="12" />
-          </View>
-          <View style={styles.statsRow}>
             <StatCard icon="envelope" title="Received Request" value="8" />
             <StatCard icon="handshake" title="Request Accepted" value="5" />
           </View>
@@ -847,8 +288,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: 'white',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -857,7 +298,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   welcomeText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#333',
   },
@@ -865,7 +306,7 @@ const styles = StyleSheet.create({
     color: '#ff6b6b',
   },
   userEmail: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#666',
     marginTop: 2,
   },
@@ -873,39 +314,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f8f9fa',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: '#ff6b6b',
   },
   logoutText: {
     color: '#ff6b6b',
     fontWeight: '500',
-    marginLeft: 5,
-    fontSize: 14,
+    marginLeft: 4,
+    fontSize: 12,
   },
   scrollView: {
     flex: 1,
-    padding: 20,
+    padding: 16,
   },
   searchSection: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   searchBox: {
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 15,
+    padding: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 3,
+    elevation: 2,
   },
   searchTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
-    marginBottom: 10,
+    marginBottom: 8,
     color: '#333',
   },
   searchInputContainer: {
@@ -918,12 +359,12 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    padding: 10,
-    fontSize: 14,
+    padding: 8,
+    fontSize: 12,
     color: '#333',
   },
   searchButton: {
-    padding: 10,
+    padding: 8,
     backgroundColor: '#f8f9fa',
     borderLeftWidth: 1,
     borderLeftColor: '#ddd',
@@ -931,78 +372,80 @@ const styles = StyleSheet.create({
   profileAlert: {
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
+    padding: 16,
+    marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    borderLeftWidth: 5,
+    shadowRadius: 3,
+    elevation: 2,
+    borderLeftWidth: 4,
     borderLeftColor: '#ff6b6b',
   },
   alertHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 4,
   },
   alertTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: '#333',
     marginLeft: 8,
   },
   alertText: {
     color: '#666',
-    marginBottom: 15,
-    marginLeft: 28,
+    fontSize: 12,
+    marginBottom: 12,
+    marginLeft: 26,
   },
   completeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ff6b6b',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 20,
+    borderRadius: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
     alignSelf: 'flex-start',
-    marginLeft: 28,
+    marginLeft: 26,
   },
   completeButtonText: {
     color: 'white',
     fontWeight: '600',
-    fontSize: 14,
+    fontSize: 12,
   },
   statsSection: {
     marginBottom: 20,
   },
-  statsRow: {
+  statsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 15,
   },
   statCard: {
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 20,
+    padding: 12,
     alignItems: 'center',
-    width: (width - 60) / 2,
+    width: (width - 48) / 4,
+    marginBottom: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 3,
+    elevation: 2,
   },
   statIcon: {
-    marginBottom: 10,
+    marginBottom: 6,
   },
   statTitle: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#666',
-    marginBottom: 5,
     textAlign: 'center',
+    marginTop: 2,
   },
   statValue: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#333',
   },
@@ -1010,10 +453,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 15,
+    marginBottom: 12,
   },
   matchesGrid: {
     flexDirection: 'row',
@@ -1023,17 +466,17 @@ const styles = StyleSheet.create({
   matchCard: {
     backgroundColor: 'white',
     borderRadius: 10,
-    width: (width - 60) / 2,
-    marginBottom: 15,
+    width: (width - 48) / 2,
+    marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 3,
+    elevation: 2,
     overflow: 'hidden',
   },
   matchImg: {
-    height: 120,
+    height: 100,
     backgroundColor: '#e9ecef',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1051,18 +494,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#e9ecef',
   },
   matchInfo: {
-    padding: 15,
+    padding: 12,
   },
   matchName: {
     fontWeight: '600',
-    fontSize: 14,
-    marginBottom: 5,
+    fontSize: 12,
+    marginBottom: 4,
     color: '#333',
   },
   matchDetails: {
     color: '#666',
-    fontSize: 12,
-    marginBottom: 10,
+    fontSize: 10,
+    marginBottom: 8,
   },
   matchActions: {
     flexDirection: 'row',
@@ -1071,10 +514,11 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 15,
-    paddingVertical: 5,
-    paddingHorizontal: 12,
-    minWidth: 50,
+    justifyContent: 'center',
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    minWidth: 40,
   },
   likeButton: {
     backgroundColor: '#ff6b6b',
@@ -1082,37 +526,27 @@ const styles = StyleSheet.create({
   passButton: {
     backgroundColor: '#e9ecef',
   },
-  likeButtonText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  passButtonText: {
-    color: '#666',
-    fontSize: 12,
-    fontWeight: '600',
-  },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-    paddingBottom: 5,
+    paddingBottom: 4,
   },
   navItem: {
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
   navLabel: {
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: 10,
+    marginTop: 2,
     fontWeight: '500',
   },
   bottomSpacer: {
-    height: 20,
+    height: 16,
   },
 });
 

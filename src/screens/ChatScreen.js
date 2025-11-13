@@ -20,33 +20,59 @@ const ChatScreen = ({ route, navigation }) => {
   const { profile } = route.params || {};
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isMatchVerified, setIsMatchVerified] = useState(true); // Set to true for testing
   const flatListRef = useRef(null);
 
-  // Sample initial messages
+  // Sample initial messages with proper structure
   const initialMessages = [
     {
       id: 1,
-      text: "Hi there! Thanks for showing interest in my profile. 😊",
-      time: "10:30 AM",
-      isUser: false
+      text: "Hello! I'm excited to chat with you. Your profile really stood out!",
+      time: "10:32 AM",
+      isUser: true,
+      type: 'text'
     },
     {
       id: 2,
-      text: "Hello! I really liked your profile. Would love to know more about you.",
-      time: "10:32 AM",
-      isUser: true
+      text: "That's wonderful! I'm currently working as a Software Engineer in Hyderabad. What about you?",
+      time: "10:33 AM",
+      isUser: false,
+      type: 'text',
+      senderName: profile?.name || 'Srivalli',
+      senderImage: profile?.image
     },
     {
       id: 3,
-      text: "That's wonderful! I'm currently working as a Software Engineer in Hyderabad. What about you?",
-      time: "10:33 AM",
-      isUser: false
+      text: "I'm a Product Manager in Delhi. I love how we both work in tech!",
+      time: "10:34 AM",
+      isUser: true,
+      type: 'text'
+    },
+    {
+      id: 4,
+      text: "That's amazing! We should definitely discuss more about our work and interests.",
+      time: "10:35 AM",
+      isUser: false,
+      type: 'text',
+      senderName: profile?.name || 'Srivalli',
+      senderImage: profile?.image
+    },
+    {
+      id: 5,
+      text: "That's wonderful! I have similar interests too.",
+      time: "7:06 PM",
+      isUser: false,
+      type: 'text',
+      senderName: profile?.name || 'Srivalli',
+      senderImage: profile?.image
     }
   ];
 
   useEffect(() => {
+    // For demo, always set to verified
+    setIsMatchVerified(true);
     setMessages(initialMessages);
-  }, []);
+  }, [profile]);
 
   useEffect(() => {
     // Scroll to bottom when new message is added
@@ -64,7 +90,8 @@ const ChatScreen = ({ route, navigation }) => {
       id: messages.length + 1,
       text: newMessage,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      isUser: true
+      isUser: true,
+      type: 'text'
     };
 
     setMessages(prev => [...prev, newMsg]);
@@ -77,7 +104,10 @@ const ChatScreen = ({ route, navigation }) => {
         "I'd love to hear more about that.",
         "Sounds great! What else do you enjoy doing?",
         "That's wonderful! I have similar interests too.",
-        "I appreciate you sharing that with me."
+        "I appreciate you sharing that with me.",
+        "That sounds amazing! Let's plan to meet sometime.",
+        "I completely agree with you on that!",
+        "We have so much in common, it's incredible!"
       ];
       
       const randomReply = replies[Math.floor(Math.random() * replies.length)];
@@ -86,7 +116,10 @@ const ChatScreen = ({ route, navigation }) => {
         id: messages.length + 2,
         text: randomReply,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        isUser: false
+        isUser: false,
+        type: 'text',
+        senderName: profile?.name || 'Srivalli',
+        senderImage: profile?.image
       };
 
       setMessages(prev => [...prev, replyMsg]);
@@ -125,38 +158,73 @@ const ChatScreen = ({ route, navigation }) => {
     }
   };
 
-  const renderMessage = ({ item }) => (
-    <View style={[
-      styles.messageContainer,
-      item.isUser ? styles.userMessage : styles.otherMessage
-    ]}>
-      {!item.isUser && profile?.image && (
-        <Image source={profile.image} style={styles.messageAvatar} />
-      )}
+  const renderMessage = ({ item, index }) => {
+    const showAvatar = !item.isUser && (
+      index === 0 || 
+      messages[index - 1].isUser !== item.isUser ||
+      !messages[index - 1].senderName
+    );
+
+    return (
       <View style={[
-        styles.messageBubble,
-        item.isUser ? styles.userBubble : styles.otherBubble
+        styles.messageContainer,
+        item.isUser ? styles.userMessage : styles.otherMessage
       ]}>
-        <Text style={[
-          styles.messageText,
-          item.isUser ? styles.userMessageText : styles.otherMessageText
-        ]}>
-          {item.text}
-        </Text>
-        <Text style={[
-          styles.messageTime,
-          item.isUser ? styles.userMessageTime : styles.otherMessageTime
-        ]}>
-          {item.time}
-        </Text>
-      </View>
-      {item.isUser && (
-        <View style={styles.userAvatar}>
-          <Icon name="user" size={16} color="#ff6b6b" />
+        {/* Other User's Avatar - Only show for first message in sequence */}
+        {!item.isUser && showAvatar && (
+          <View style={styles.avatarContainer}>
+            {item.senderImage ? (
+              <Image source={item.senderImage} style={styles.messageAvatar} />
+            ) : (
+              <View style={styles.avatarPlaceholder}>
+                <Icon name="user" size={16} color="#fff" />
+              </View>
+            )}
+          </View>
+        )}
+        
+        {/* Spacer for when avatar is hidden */}
+        {!item.isUser && !showAvatar && (
+          <View style={styles.avatarSpacer} />
+        )}
+
+        <View style={styles.messageContent}>
+          {/* Sender Name for other user's messages */}
+          {!item.isUser && showAvatar && item.senderName && (
+            <Text style={styles.senderName}>{item.senderName}</Text>
+          )}
+          
+          <View style={[
+            styles.messageBubble,
+            item.isUser ? styles.userBubble : styles.otherBubble
+          ]}>
+            <Text style={[
+              styles.messageText,
+              item.isUser ? styles.userMessageText : styles.otherMessageText
+            ]}>
+              {item.text}
+            </Text>
+          </View>
+          
+          <Text style={[
+            styles.messageTime,
+            item.isUser ? styles.userMessageTime : styles.otherMessageTime
+          ]}>
+            {item.time}
+          </Text>
         </View>
-      )}
-    </View>
-  );
+
+        {/* Current User's Avatar */}
+        {item.isUser && (
+          <View style={styles.userAvatarContainer}>
+            <View style={styles.userAvatar}>
+              <Text style={styles.userAvatarText}>Y</Text>
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -183,8 +251,10 @@ const ChatScreen = ({ route, navigation }) => {
             </View>
           )}
           <View style={styles.profileText}>
-            <Text style={styles.profileName}>{profile?.name || 'Your Match'}</Text>
-            <Text style={styles.profileStatus}>Online</Text>
+            <Text style={styles.profileName}>{profile?.name || 'Srivalli'}</Text>
+            <Text style={styles.profileStatus}>
+              <Icon name="check-circle" size={12} color="#4CAF50" /> Online
+            </Text>
           </View>
         </TouchableOpacity>
 
@@ -194,9 +264,6 @@ const ChatScreen = ({ route, navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerButton} onPress={handleVideoCall}>
             <Icon name="video" size={18} color="#333" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerButton}>
-            <Icon name="ellipsis-v" size={18} color="#333" />
           </TouchableOpacity>
         </View>
       </View>
@@ -215,13 +282,7 @@ const ChatScreen = ({ route, navigation }) => {
           style={styles.messagesList}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-          ListEmptyComponent={
-            <View style={styles.emptyChat}>
-              <Icon name="comments" size={50} color="#ccc" />
-              <Text style={styles.emptyChatText}>Start a conversation</Text>
-              <Text style={styles.emptyChatSubText}>Send your first message to break the ice!</Text>
-            </View>
-          }
+          contentContainerStyle={styles.messagesContent}
         />
 
         {/* Message Input */}
@@ -232,7 +293,7 @@ const ChatScreen = ({ route, navigation }) => {
           
           <TextInput
             style={styles.textInput}
-            placeholder="Type a message..."
+            placeholder={`Message ${profile?.name || 'Srivalli'}...`}
             placeholderTextColor="#999"
             value={newMessage}
             onChangeText={setNewMessage}
@@ -318,6 +379,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#4CAF50',
     marginTop: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   headerActions: {
     flexDirection: 'row',
@@ -332,66 +395,70 @@ const styles = StyleSheet.create({
   },
   messagesList: {
     flex: 1,
+  },
+  messagesContent: {
     paddingHorizontal: 15,
-  },
-  emptyChat: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 100,
-  },
-  emptyChatText: {
-    fontSize: 18,
-    color: '#666',
-    fontWeight: '500',
-    marginTop: 10,
-  },
-  emptyChatSubText: {
-    fontSize: 14,
-    color: '#999',
-    marginTop: 5,
-    textAlign: 'center',
+    paddingVertical: 10,
   },
   messageContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
     marginVertical: 4,
-    maxWidth: '80%',
+    alignItems: 'flex-start',
   },
   userMessage: {
-    alignSelf: 'flex-end',
-    flexDirection: 'row-reverse',
+    justifyContent: 'flex-end',
   },
   otherMessage: {
-    alignSelf: 'flex-start',
+    justifyContent: 'flex-start',
   },
-  messageAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  avatarContainer: {
+    width: 36,
+    marginRight: 8,
+    alignItems: 'center',
+  },
+  avatarSpacer: {
+    width: 36,
     marginRight: 8,
   },
-  userAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#e0e0e0',
+  messageAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+  avatarPlaceholder: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#ff6b6b',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  messageContent: {
+    flex: 1,
+    maxWidth: '80%',
+  },
+  senderName: {
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '500',
+    marginBottom: 2,
     marginLeft: 8,
   },
   messageBubble: {
-    padding: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderRadius: 18,
-    maxWidth: '100%',
+    marginBottom: 4,
   },
   userBubble: {
     backgroundColor: '#ff6b6b',
     borderBottomRightRadius: 4,
+    alignSelf: 'flex-end',
   },
   otherBubble: {
     backgroundColor: 'white',
     borderBottomLeftRadius: 4,
+    alignSelf: 'flex-start',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -410,14 +477,33 @@ const styles = StyleSheet.create({
   },
   messageTime: {
     fontSize: 11,
-    marginTop: 4,
     opacity: 0.7,
+    marginHorizontal: 8,
   },
   userMessageTime: {
-    color: 'rgba(255,255,255,0.8)',
+    color: '#666',
     textAlign: 'right',
   },
   otherMessageTime: {
+    color: '#666',
+    textAlign: 'left',
+  },
+  userAvatarContainer: {
+    width: 36,
+    marginLeft: 8,
+    alignItems: 'center',
+  },
+  userAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#e0e0e0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  userAvatarText: {
+    fontSize: 14,
+    fontWeight: '600',
     color: '#666',
   },
   inputContainer: {
@@ -462,5 +548,3 @@ const styles = StyleSheet.create({
 });
 
 export default ChatScreen;
-
-
