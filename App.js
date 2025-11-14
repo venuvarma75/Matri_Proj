@@ -493,8 +493,7 @@ import RegisterAboutYourself from './src/screens/RegisterAboutYourself';
 import Dashboard from './src/screens/Dashboard';
 import MatchesScreen from './src/screens/MatchesScreen';
 import ChatScreen from "./src/screens/ChatScreen";
-
-
+import ProfileScreen from "./src/screens/ProfileScreen";
 
 // Safe image imports with fallbacks
 const images = {
@@ -524,6 +523,7 @@ export default function App() {
       password: "demo123",
       email: "demo@example.com",
       mobile: "1234567890",
+      fullName: "Demo User",
       isRegistered: true
     }
   ]);
@@ -534,11 +534,36 @@ export default function App() {
   };
 
   // Handle successful login - navigate to home
-  const handleLoginSuccess = (userData) => {
-    console.log('✅ Login successful, navigating to home:', userData);
+  // const handleLoginSuccess = (userData) => {
+  //   console.log('✅ Login successful, navigating to home:', userData);
+  //   setCurrentUser(userData);
+  //   navigateToScreen('dashboard');
+  // };
+
+
+  // In your App.js, update the handleLoginSuccess function:
+const handleLoginSuccess = (userData) => {
+  console.log('✅ Login successful, navigating to home:', userData);
+  
+  // Find the complete user data from registeredUsers
+  const completeUserData = registeredUsers.find(
+    user => user.username === userData.username || user.email === userData.email
+  );
+  
+  console.log('🔍 COMPLETE USER DATA FOUND:', completeUserData);
+
+  if (completeUserData) {
+    setCurrentUser(completeUserData);
+  } else {
+    // Fallback to the basic user data from login
+    console.log('⚠️ No complete user data found, using basic login data');
     setCurrentUser(userData);
-    navigateToScreen('dashboard');
-  };
+  }
+  
+  navigateToScreen('dashboard');
+};
+
+
 
   // Handle logout - navigate back to login
   const handleLogout = () => {
@@ -595,33 +620,38 @@ export default function App() {
         fullName: completeUserData.fullName,
         gender: completeUserData.gender,
         dateOfBirth: completeUserData.dateOfBirth,
-        
-        // Contact Details (from RegisterForm)
+        age: completeUserData.age,
         email: completeUserData.email,
-        mobile: completeUserData.mobile,
+        mobileNumber: completeUserData.mobileNumber,
         
         // Religion Details (from RegisterReligionDetails)
         religion: completeUserData.religion,
         caste: completeUserData.caste,
         subCaste: completeUserData.subCaste,
-        horoscope: completeUserData.horoscope,
+        dosham: completeUserData.dosham,
+        willingToMarryOtherCaste: completeUserData.willingToMarryOtherCaste,
         
         // Personal Details (from RegisterPersonalDetails)
         height: completeUserData.height,
-        weight: completeUserData.weight,
         maritalStatus: completeUserData.maritalStatus,
-        physicalStatus: completeUserData.physicalStatus,
+        noOfChildren: completeUserData.noOfChildren,
+        childrenLivingWithYou: completeUserData.childrenLivingWithYou,
+        familyStatus: completeUserData.familyStatus,
+        familyType: completeUserData.familyType,
         
         // Professional Details (from RegisterProfessionalDetails)
-        education: completeUserData.education,
+        highestEducation: completeUserData.highestEducation,
         occupation: completeUserData.occupation,
         annualIncome: completeUserData.annualIncome,
         employedIn: completeUserData.employedIn,
+        workLocation: completeUserData.workLocation,
+        state: completeUserData.state,
         
         // About Yourself (from RegisterAboutYourself)
-        aboutMe: completeUserData.aboutMe,
-        familyDetails: completeUserData.familyDetails,
-        hobbies: completeUserData.hobbies,
+        aboutYourself: completeUserData.aboutYourself,
+        
+        // Interests
+        interests: completeUserData.interests || ["Product Management", "Cricket", "Gym", "Travel"],
         
         // System fields
         registrationDate: completeUserData.registrationDate,
@@ -668,8 +698,8 @@ export default function App() {
     const loginData = {
       username: formData.username,
       password: formData.password,
-      email: formData.email,
-      mobile: formData.mobile
+      mobileNumber: formData.mobileNumber,
+      fullName: formData.fullName
     };
     
     setRegistrationData(loginData);
@@ -739,6 +769,16 @@ export default function App() {
 
   const handleNavigateBackToProfessionalDetails = () => {
     navigateToScreen('registerProfessionalDetails');
+  };
+
+  // Profile navigation handler
+  const handleNavigateToProfile = () => {
+    navigateToScreen('profile');
+  };
+
+  // Back navigation from profile
+  const handleNavigateBackFromProfile = () => {
+    navigateToScreen('dashboard');
   };
 
   console.log('🔄 App Rendered - Current Screen:', currentScreen);
@@ -852,7 +892,10 @@ export default function App() {
         user={currentUser} 
         onLogout={handleLogout}
         profileImages={images}
-        navigation={{ navigate: navigateToScreen }}
+        navigation={{ 
+          navigate: navigateToScreen,
+          goBack: () => navigateToScreen('dashboard')
+        }}
       />
     );
   }
@@ -863,32 +906,39 @@ export default function App() {
         user={currentUser}
         onLogout={handleLogout}
         profileImages={images}
-        navigation={{ navigate: navigateToScreen }}
+        navigation={{ 
+          navigate: navigateToScreen,
+          goBack: () => navigateToScreen('dashboard')
+        }}
       />
     );
   }
 
-//   if (currentScreen === 'chat') {
-//   return (
-//     <ChatScreen 
-//       route={{ params: routeParams }} // Pass the profile data
-//       navigation={{ navigate: navigateToScreen, goBack: () => navigateToScreen('matches') }}
-//     />
-//   );
-// }
+  if (currentScreen === 'chat') {
+    return (
+      <ChatScreen 
+        route={{ params: { profile: {} } }} // Provide default empty profile
+        navigation={{ 
+          navigate: navigateToScreen, 
+          goBack: () => navigateToScreen('matches') 
+        }}
+      />
+    );
+  }
 
-
-if (currentScreen === 'chat') {
-  return (
-    <ChatScreen 
-      route={{ params: { profile: {} } }} // Provide default empty profile
-      navigation={{ 
-        navigate: navigateToScreen, 
-        goBack: () => navigateToScreen('matches') 
-      }}
-    />
-  );
-}
+  if (currentScreen === 'profile') {
+    return (
+      <ProfileScreen 
+        user={currentUser}
+        onNavigateBack={handleNavigateBackFromProfile}
+        onLogout={handleLogout}
+        navigation={{
+          navigate: navigateToScreen,
+          goBack: handleNavigateBackFromProfile
+        }}
+      />
+    );
+  }
 
   // Fallback - if no screen matches, go to login
   return (
@@ -901,3 +951,4 @@ if (currentScreen === 'chat') {
     />
   );
 }
+

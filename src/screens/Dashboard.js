@@ -158,7 +158,8 @@ const Dashboard = ({ user, onLogout, profileImages, navigation }) => {
   };
 
   const navigateToProfile = () => {
-    Alert.alert('Coming Soon', 'Profile feature will be available soon!');
+    // Alert.alert('Coming Soon', 'Profile feature will be available soon!');
+     navigation.navigate('profile');
   };
 
   return (
@@ -277,6 +278,7 @@ const Dashboard = ({ user, onLogout, profileImages, navigation }) => {
       </View>
     </SafeAreaView>
   );
+
 };
 
 const styles = StyleSheet.create({
